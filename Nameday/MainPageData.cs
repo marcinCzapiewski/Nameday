@@ -65,11 +65,22 @@ namespace Nameday
         {
             Namedays = new ObservableCollection<NamedayModel>();
 
-            for(int month = 1; month <= 12; month++)
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {
-                _allNamedays.Add(new NamedayModel(month, 1, new string[] { "Adam" }));
-                _allNamedays.Add(new NamedayModel(month, 24, new string[] { "Eve", "Andrew" }));
+                for (int month = 1; month <= 12; month++)
+                {
+                    _allNamedays.Add(new NamedayModel(month, 1, new string[] { "Adam" }));
+                    _allNamedays.Add(new NamedayModel(month, 24, new string[] { "Eve", "Andrew" }));
+                }
+                PerformFiltering();
             }
+            else
+                LoadData();
+        }
+
+        public async void LoadData()
+        {
+            _allNamedays = await NamedayRepository.GetAllNamedaysAsync();
             PerformFiltering();
         }
 
