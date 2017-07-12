@@ -14,6 +14,21 @@
                 <ItemsControl ItemsSource="{Binding Names}"/>
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="ContactExTemplate">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Ellipse Fill="{ThemeResource SystemControlBackgroundAccentBrush}" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100"/>
+                <TextBlock Text="{Binding Initials, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <Ellipse Fill="{Binding Picture, Mode=OneWay}" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100"/>
+                <StackPanel VerticalAlignment="Center" Margin="20,0,0,0" Grid.Column="1">
+                    <TextBlock Text="{Binding Contact.FullName, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <Button Content="Email" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding EmailVisibility, Mode=OneWay}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
     <Page.DataContext>
         <local:MainPageData/>
@@ -38,7 +53,9 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Greeting}" VerticalAlignment="Top"/>
-            <Ellipse Fill="#FFF4F4F5" Grid.Row="1" Stroke="Black"/>
+            <ScrollViewer Grid.Row="1">
+                <ItemsControl ItemsSource="{Binding Contacts}" ItemTemplate="{StaticResource ContactExTemplate}"/>
+            </ScrollViewer>
         </Grid>
 
     </Grid>

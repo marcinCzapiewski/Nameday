@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Contacts;
 
 namespace Nameday
 {
@@ -39,6 +40,8 @@ namespace Nameday
                     Greeting = "Hello World!";
                 else
                     Greeting = "Hello " + value.NamesAsString;
+
+                UpdateContacts();
             }
         }
 
@@ -59,7 +62,8 @@ namespace Nameday
             }
         }
 
-
+        public ObservableCollection<ContactEx> Contacts { get; } =
+            new ObservableCollection<ContactEx>();
 
         public MainPageData()
         {
@@ -67,6 +71,13 @@ namespace Nameday
 
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {
+                Contacts = new ObservableCollection<ContactEx>
+                {
+                    new ContactEx("Contact", "1"),
+                    new ContactEx("Contact", "2"),
+                    new ContactEx("Contact", "3")
+                };
+
                 for (int month = 1; month <= 12; month++)
                 {
                     _allNamedays.Add(new NamedayModel(month, 1, new string[] { "Adam" }));
@@ -106,6 +117,21 @@ namespace Nameday
                 var resultItem = result[i];
                 if (i + 1 > Namedays.Count || !Namedays[i].Equals(resultItem))
                     Namedays.Insert(i, resultItem);
+            }
+        }
+
+        private async void UpdateContacts()
+        {
+            Contacts.Clear();
+
+            if (SelectedNameday != null)
+            {
+                var contactStore =
+                    await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
+
+                foreach (var name in SelectedNameday.Names)
+                    foreach (var contact in await contactStore.FindContactsAsync(name))
+                        Contacts.Add(new ContactEx(contact));
             }
         }
     }
